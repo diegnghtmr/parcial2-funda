@@ -1,7 +1,7 @@
 section .data
     prompt1 db "Ingrese el valor 1 (sumando, minuendo, multiplicando, dividendo, dividendo, radical, base): ", 0
     prompt2 db "Ingrese el valor 2 (sumando, sustraendo, multiplicador, divisor, divisor, radicando, exponente): ", 0
-    prompt3 db "Ingrese la operación que desea realizar (+, -, *, /, %, r, **, exit): ", 0
+    prompt3 db "Ingrese la operación que desea realizar (+, -, , /, %, r, *, exit): ", 0
     exit_msg db "Saliendo de la calculadora.", 10, 0
     error_div_zero db "Error: División por cero no permitida.", 10, 0
     error_root db "Error: No se puede calcular esta raíz.", 10, 0
@@ -23,10 +23,49 @@ main:
     push rbp
     mov rbp, rsp
     
-    ; Ciclo principal, aquí es donde se ejecutará la lógica
 .loop:
-    ; Por ahora no se ha añadido lógica específica
-    jmp .exit
+    ; Solicitar primer número
+    mov rdi, prompt1
+    xor rax, rax
+    call printf
+    
+    ; Leer primer número
+    mov rdi, fmt_integer
+    mov rsi, num1
+    xor rax, rax
+    call scanf
+    
+    ; Solicitar segundo número
+    mov rdi, prompt2
+    xor rax, rax
+    call printf
+    
+    ; Leer segundo número
+    mov rdi, fmt_integer
+    mov rsi, num2
+    xor rax, rax
+    call scanf
+    
+    ; Solicitar operación
+    mov rdi, prompt3
+    xor rax, rax
+    call printf
+    
+    ; Leer operación
+    mov rdi, fmt_char
+    mov rsi, operation
+    mov rdx, operation
+    inc rdx
+    xor rax, rax
+    call scanf
+    
+    ; Verificar si es 'exit'
+    mov al, byte [operation]
+    cmp al, 'e'
+    je .exit
+
+    ; Aún no se han agregado las operaciones, se vuelve a solicitar
+    jmp .loop
 
 .exit:
     ; Mensaje de salida
@@ -37,5 +76,5 @@ main:
     ; Restaurar pila y finalizar
     mov rsp, rbp
     pop rbp
-    xor eax, eax
-    ret
+    xor eax, eax
+    ret
