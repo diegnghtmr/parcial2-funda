@@ -1,7 +1,7 @@
 section .data
     prompt1 db "Ingrese el valor 1 (sumando, minuendo, multiplicando, dividendo, dividendo, radical, base): ", 0
     prompt2 db "Ingrese el valor 2 (sumando, sustraendo, multiplicador, divisor, divisor, radicando, exponente): ", 0
-    prompt3 db "Ingrese la operación que desea realizar (+, -, , /, %, r, *, exit): ", 0
+    prompt3 db "Ingrese la operación que desea realizar (+, -, *, /, %, r, **, exit): ", 0
     exit_msg db "Saliendo de la calculadora.", 10, 0
     error_div_zero db "Error: División por cero no permitida.", 10, 0
     error_root db "Error: No se puede calcular esta raíz.", 10, 0
@@ -63,8 +63,57 @@ main:
     mov al, byte [operation]
     cmp al, 'e'
     je .exit
+    
+    ; Realizar operación
+    mov eax, dword [num1]
+    mov ebx, dword [num2]
+    
+    mov cl, byte [operation]
+    cmp cl, '+'
+    je .add
+    cmp cl, '-'
+    je .sub
+    cmp cl, '*'
+    je .mul
+    cmp cl, '/'
+    je .div
 
-    ; Aún no se han agregado las operaciones, se vuelve a solicitar
+    ; Al entrar acá, la operación es inválida
+    mov rdi, invalid_op
+    xor rax, rax
+    call printf
+    jmp .loop
+
+.add:
+    add eax, ebx
+    jmp .print_result
+    
+.sub:
+    sub eax, ebx
+    jmp .print_result
+    
+.mul:
+    imul eax, ebx
+    jmp .print_result
+    
+.div:
+    cmp ebx, 0
+    je .div_zero
+    cdq
+    idiv ebx
+    jmp .print_result
+
+.div_zero:
+    mov rdi, error_div_zero
+    xor rax, rax
+    call printf
+    jmp .loop
+    
+.print_result:
+    mov rdi, result_msg
+    mov rsi, rax
+    xor rax, rax
+    call printf
     jmp .loop
 
 .exit:
@@ -76,5 +125,5 @@ main:
     ; Restaurar pila y finalizar
     mov rsp, rbp
     pop rbp
-    xor eax, eax
-    ret
+    xor eax, eax
+    ret
