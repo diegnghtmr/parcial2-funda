@@ -1,7 +1,7 @@
 section .data
     prompt1 db "Ingrese el valor 1 (sumando, minuendo, multiplicando, dividendo, dividendo, radical, base): ", 0
     prompt2 db "Ingrese el valor 2 (sumando, sustraendo, multiplicador, divisor, divisor, radicando, exponente): ", 0
-    prompt3 db "Ingrese la operación que desea realizar (+, -, , /, %, r, *, exit): ", 0
+    prompt3 db "Ingrese la operación que desea realizar (+, -, *, /, %, r, **, exit): ", 0
     exit_msg db "Saliendo de la calculadora.", 10, 0
     error_div_zero db "Error: División por cero no permitida.", 10, 0
     error_root db "Error: No se puede calcular esta raíz.", 10, 0
@@ -87,6 +87,8 @@ main:
     je .div
     cmp cl, '%'
     je .mod
+    cmp cl, 'r'
+    je .root
 
     ; Al entrar acá, la operación es inválida
     mov rdi, invalid_op
@@ -151,6 +153,74 @@ main:
 .power_zero:
     mov eax, 1
     jmp .print_result
+
+.root:
+    ; Si el radicando es 0, el resultado es 0
+    cmp ebx, 0
+    je .print_result
+    
+    ; Si el radical es 1, el resultado es el radicando
+    cmp eax, 1
+    je .raiz_uno
+    
+    ; Si el radical es 2 (raíz cuadrada)
+    cmp eax, 2
+    je .raiz_cuadrada
+    
+    ; Si el radical es 3 (raíz cúbica)
+    cmp eax, 3
+    je .raiz_cubica
+    
+    ; Para otros casos, mostrar error
+    mov rdi, error_root
+    xor rax, rax
+    call printf
+    jmp .loop
+
+.raiz_uno:
+    mov eax, ebx
+    jmp .print_result
+
+.raiz_cuadrada:
+    ; Verificar si el radicando es negativo
+    cmp ebx, 0
+    jl .root_error
+    
+    mov eax, ebx
+    mov ecx, 0
+    
+.calc_sqrt:
+    inc ecx
+    mov eax, ecx
+    mul eax
+    cmp eax, ebx
+    jbe .calc_sqrt
+    
+    dec ecx
+    mov eax, ecx
+    jmp .print_result
+
+.raiz_cubica:
+    mov eax, ebx
+    mov ecx, 0
+    
+.calc_cbrt:
+    inc ecx
+    mov eax, ecx
+    imul eax, eax
+    imul eax, ecx
+    cmp eax, ebx
+    jle .calc_cbrt
+    
+    dec ecx
+    mov eax, ecx
+    jmp .print_result
+
+.root_error:
+    mov rdi, error_root
+    xor rax, rax
+    call printf
+    jmp .loop
 
 .div_zero:
     mov rdi, error_div_zero
