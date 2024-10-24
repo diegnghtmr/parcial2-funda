@@ -1,7 +1,7 @@
 section .data
     prompt1 db "Ingrese el valor 1 (sumando, minuendo, multiplicando, dividendo, dividendo, radical, base): ", 0
     prompt2 db "Ingrese el valor 2 (sumando, sustraendo, multiplicador, divisor, divisor, radicando, exponente): ", 0
-    prompt3 db "Ingrese la operación que desea realizar (+, -, , /, %, r, *, exit): ", 0
+    prompt3 db "Ingrese la operación que desea realizar (+, -, *, /, %, r, **, exit): ", 0
     exit_msg db "Saliendo de la calculadora.", 10, 0
     error_div_zero db "Error: División por cero no permitida.", 10, 0
     error_root db "Error: No se puede calcular esta raíz.", 10, 0
@@ -242,5 +242,5 @@ main:
     
     mov rsp, rbp
     pop rbp
-    xor eax, eax
-    ret
+    xor eax, eax
+    ret
