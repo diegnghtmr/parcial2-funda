@@ -1,7 +1,7 @@
 section .data
     prompt1 db "Ingrese el valor 1 (sumando, minuendo, multiplicando, dividendo, dividendo, radical, base): ", 0
     prompt2 db "Ingrese el valor 2 (sumando, sustraendo, multiplicador, divisor, divisor, radicando, exponente): ", 0
-    prompt3 db "Ingrese la operación que desea realizar (+, -, *, /, %, r, **, exit): ", 0
+    prompt3 db "Ingrese la operación que desea realizar (+, -, , /, %, r, *, exit): ", 0
     exit_msg db "Saliendo de la calculadora.", 10, 0
     error_div_zero db "Error: División por cero no permitida.", 10, 0
     error_root db "Error: No se puede calcular esta raíz.", 10, 0
@@ -63,14 +63,14 @@ main:
     mov al, byte [operation]
     cmp al, 'e'
     je .exit
-
+    
     ; Verificar si es potencia
     cmp al, '*'
     jne .check_other_ops
     mov al, byte [operation + 1]
     cmp al, '*'
     je .power
-
+    
 .check_other_ops:
     ; Realizar operación
     mov eax, dword [num1]
@@ -89,13 +89,13 @@ main:
     je .mod
     cmp cl, 'r'
     je .root
-
+    
     ; Al entrar acá, la operación es inválida
     mov rdi, invalid_op
     xor rax, rax
     call printf
     jmp .loop
-
+    
 .add:
     add eax, ebx
     jmp .print_result
@@ -114,7 +114,7 @@ main:
     cdq
     idiv ebx
     jmp .print_result
-
+    
 .mod:
     cmp ebx, 0
     je .div_zero
@@ -189,12 +189,12 @@ main:
     mov eax, ebx
     mov ecx, 0
     
-.calc_sqrt:
-    inc ecx
-    mov eax, ecx
-    mul eax
-    cmp eax, ebx
-    jbe .calc_sqrt
+    .calc_sqrt:
+        inc ecx
+        mov eax, ecx
+        mul eax
+        cmp eax, ebx
+        jbe .calc_sqrt
     
     dec ecx
     mov eax, ecx
@@ -204,13 +204,13 @@ main:
     mov eax, ebx
     mov ecx, 0
     
-.calc_cbrt:
-    inc ecx
-    mov eax, ecx
-    imul eax, eax
-    imul eax, ecx
-    cmp eax, ebx
-    jle .calc_cbrt
+    .calc_cbrt:
+        inc ecx
+        mov eax, ecx
+        imul eax, eax
+        imul eax, ecx
+        cmp eax, ebx
+        jle .calc_cbrt
     
     dec ecx
     mov eax, ecx
@@ -234,14 +234,12 @@ main:
     xor rax, rax
     call printf
     jmp .loop
-
+    
 .exit:
-    ; Mensaje de salida
     mov rdi, exit_msg
     xor rax, rax
     call printf
     
-    ; Restaurar pila y finalizar
     mov rsp, rbp
     pop rbp
     xor eax, eax
